@@ -1,5 +1,27 @@
 # React + TypeScript + Vite
 
+## Screenshots
+
+Job Tracker's implemented screens, captured locally using a temporary demo account and the bundled sample applications. No real user data or credentials are shown.
+
+| Login | Create Company |
+| --- | --- |
+| ![Login](docs/screenshots/login.png) | ![Create Company](docs/screenshots/register.png) |
+
+| Email Verification | Dashboard |
+| --- | --- |
+| ![Email verification code entry](docs/screenshots/verify-email.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Applications | Add Application |
+| --- | --- |
+| ![Applications](docs/screenshots/applications.png) | ![Add Application dialog](docs/screenshots/add-application.png) |
+
+| Statistics | Settings |
+| --- | --- |
+| ![Statistics](docs/screenshots/statistics.png) | ![Settings](docs/screenshots/settings.png) |
+
+Open an image for the full-size capture. Jobs, Candidates, and Interviews do not currently have standalone pages; interview stages appear in Applications and Statistics.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
