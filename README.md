@@ -1,97 +1,89 @@
-# React + TypeScript + Vite
+# Job Tracker
+
+A job-application tracking interface with a React frontend and an Express/PostgreSQL account API. Review application stages, manage a local application list, and visualize progress through dashboard charts.
+
+## Overview
+
+The frontend implements Dashboard, Applications, Statistics, Settings, and account/verification screens. Applications are initialized from six bundled examples and saved in browser localStorage through ApplicationContext. They are not currently synchronized with the server's Prisma application models. The server handles company/account registration, email verification, authentication, and profile/avatar operations.
 
 ## Screenshots
 
-Job Tracker's implemented screens, captured locally using a temporary demo account and the bundled sample applications. No real user data or credentials are shown.
+Selected existing captures from the real application using a temporary demo account and bundled sample applications. These were reviewed and reused rather than recaptured. They do not represent a newly verified live backend session.
 
-| Login | Create Company |
+| Dashboard | Applications |
 | --- | --- |
-| ![Login](docs/screenshots/login.png) | ![Create Company](docs/screenshots/register.png) |
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Applications](docs/screenshots/applications.png) |
 
-| Email Verification | Dashboard |
+| Add application | Statistics |
 | --- | --- |
-| ![Email verification code entry](docs/screenshots/verify-email.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| ![Application form](docs/screenshots/add-application.png) | ![Stage statistics](docs/screenshots/statistics.png) |
 
-| Applications | Add Application |
-| --- | --- |
-| ![Applications](docs/screenshots/applications.png) | ![Add Application dialog](docs/screenshots/add-application.png) |
+## Features
 
-| Statistics | Settings |
-| --- | --- |
-| ![Statistics](docs/screenshots/statistics.png) | ![Settings](docs/screenshots/settings.png) |
+- Add, edit, delete, search, and filter local applications by company, role, location, and stage.
+- Dashboard totals and Recharts application statistics, including interview stages.
+- English/Arabic interface preferences, RTL support, and light/dark themes.
+- Account/company registration, verification-code screens, and sign-in backed by an Express API when configured.
+- Profile avatar upload/removal and cookie-based JWT authentication on the server.
 
-Open an image for the full-size capture. Jobs, Candidates, and Interviews do not currently have standalone pages; interview stages appear in Applications and Statistics.
+Jobs, Candidates, and Interviews do not have standalone pages. This repository is not a complete applicant-tracking platform with server-persisted application CRUD.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Stack and structure
 
-Currently, two official plugins are available:
+React 19, TypeScript, Vite 8, React Router, and Recharts on the client; Express 5, Prisma 7, PostgreSQL, bcryptjs, Zod, Multer, and Nodemailer on the server.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+src/pages/             Account screens and main workspaces
+src/context/           Authentication, local applications, and preferences
+src/data/              Bundled sample applications
+src/utils/             Statistics calculations
+server/src/routes/     HTTP account/profile routes
+server/src/lib/        Prisma and verification helpers
+server/prisma/         Data schema and migrations
+server/tests/          Authentication and email checks
+docs/screenshots/      Existing real UI captures
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Use a current Node.js version compatible with the locked Vite/Prisma toolchain; this review used Node 24. Install PostgreSQL for the account API. From the repository root:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```powershell
+npm ci
+cd server
+npm ci
+# Create server/.env locally with the configuration described below.
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev
 ```
+
+In a second terminal, from the repository root:
+
+```powershell
+npm run dev
+```
+
+Open http://localhost:5173. The Vite development proxy forwards /api and /uploads to http://127.0.0.1:4000. Migration commands modify the selected PostgreSQL database: choose a dedicated development database and inspect migrations first.
+
+## Configuration
+
+Keep server/.env local. Set DATABASE_URL and a randomly generated JWT_SECRET of at least 32 characters. Optional server settings are PORT (default 4000), CLIENT_URL (default http://localhost:5173), and NODE_ENV. Email delivery uses SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, and EMAIL_FROM. Configure real SMTP before expecting verification messages to arrive.
+
+The client accepts VITE_API_URL; the default is /api. Production hosting must supply API/upload routing and a history fallback for React Router. Never put server secrets in VITE_ variables, which are public client build inputs.
+
+## Validation and status
+
+The client production build and server TypeScript build passed locally. The server build requires Prisma client generation first; the generated client is not committed. The compiled client rendered its sign-in screen. Full account/database/email runtime verification was blocked by absent local PostgreSQL/SMTP configuration. Existing account/email tests also stop at configuration validation without DATABASE_URL and JWT_SECRET; they are not reported as passing.
+
+```powershell
+npm run build
+cd server
+npm run prisma:generate
+npm run build
+# With an appropriate local test environment configured:
+npm run test:auth
+npm run test:email
+```
+
+Application storage remains browser-local and can be cleared by the browser. The frontend build reports a large JavaScript chunk warning. Backend integration and production deployment require further validation.
